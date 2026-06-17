@@ -140,6 +140,7 @@ supabase/
 - The UI uses a demo/local data layer automatically when Supabase credentials are missing.
 - Supabase queries are isolated in composables so the data layer can be hardened further without redesigning pages.
 - The current deployment config targets a single Nuxt app on Vercel. The shared backend/domain packages keep the door open for a future separate API or mobile app.
+- For Vercel, set the project Root Directory to `apps/web` and keep source files outside the root directory enabled so the shared workspace packages resolve during builds.
 
 ## Docs
 
