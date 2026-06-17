@@ -17,6 +17,7 @@
       ],
       "outputs": [
         ".nuxt/**",
+        ".vercel/output/**",
         ".output/**",
         "dist/**"
       ]
