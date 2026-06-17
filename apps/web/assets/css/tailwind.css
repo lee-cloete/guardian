@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    @apply bg-stone-950 text-stone-100 antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-stone-950 text-stone-100;
+  }
+
+  * {
+    @apply border-stone-800;
+  }
+
+  ::selection {
+    @apply bg-emerald-300 text-stone-950;
+  }
+}
