@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL ?? '',
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
-      demoMode: process.env.NUXT_PUBLIC_DEMO_MODE ?? 'true'
+      demoMode: process.env.NUXT_PUBLIC_DEMO_MODE ?? 'true',
+      mapCountryCodes: process.env.NUXT_PUBLIC_MAP_COUNTRY_CODES ?? 'za'
     }
   },
   app: {

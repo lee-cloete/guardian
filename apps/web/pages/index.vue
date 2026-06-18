@@ -1,127 +1,168 @@
 <script setup lang="ts">
 import { serviceTypes } from '@guardian/domain'
 import { formatCurrency } from '~/utils/formatting'
+import { resolveCityCoordinate } from '~/utils/geo'
 
 const trustSignals = [
   'Role-aware dashboards for clients, providers, and admins',
-  'Supabase Auth + Postgres + RLS ready data model',
-  'Provider onboarding, booking status flow, and admin oversight'
+  'Supabase Auth, Postgres, and RLS aligned to the booking flow',
+  'Provider onboarding, live dispatch states, and admin oversight'
 ]
 
 const workflow = [
   {
     title: 'Request coverage',
-    body: 'Choose a service type, location, time, urgency, and guard count from the client dashboard.'
+    body: 'Clients place a booking from a live map workspace with service, timing, urgency, and team size.'
   },
   {
-    title: 'Verify providers',
-    body: 'Providers complete onboarding, share coverage radius and rates, and wait for admin verification.'
+    title: 'Dispatch providers',
+    body: 'Security teams publish availability, claim work, and move each job through en route and active states.'
   },
   {
-    title: 'Run operations',
-    body: 'Bookings move from pending to accepted, en route, active, and completed with shared visibility.'
+    title: 'Control the network',
+    body: 'Admins monitor supply, demand, and provider verification from one operations surface.'
+  }
+]
+
+const city = resolveCityCoordinate('Cape Town')
+
+const heroMarkers = [
+  {
+    id: 'hero-client-1',
+    label: 'EV',
+    detail: 'Event perimeter · Active',
+    latitude: city.latitude + 0.012,
+    longitude: city.longitude - 0.021,
+    tone: 'active' as const
+  },
+  {
+    id: 'hero-client-2',
+    label: 'CP',
+    detail: 'Close protection · Pending',
+    latitude: city.latitude - 0.01,
+    longitude: city.longitude + 0.024,
+    tone: 'pending' as const
+  },
+  {
+    id: 'hero-provider',
+    label: 'HQ',
+    detail: 'Provider base',
+    latitude: city.latitude + 0.002,
+    longitude: city.longitude + 0.002,
+    tone: 'provider' as const
   }
 ]
 </script>
 
 <template>
   <main>
-    <section class="border-b border-stone-900 bg-[radial-gradient(circle_at_top_left,_rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_top_right,_rgba(251,191,36,0.10),transparent_22%),linear-gradient(180deg,_#111111_0%,_#0c0a09_100%)]">
-      <div class="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.2fr_0.8fr] lg:px-8 lg:py-28">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+    <section class="relative overflow-hidden border-b border-stone-200 bg-[#f4f2ee]">
+      <div class="absolute inset-0">
+        <OperationsMap
+          class-name="h-full w-full"
+          :center="[city.longitude, city.latitude]"
+          :markers="heroMarkers"
+          selected-marker-id="hero-client-1"
+          :zoom="11"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,242,238,0.28)_0%,rgba(244,242,238,0.55)_30%,rgba(244,242,238,0.92)_72%,#f4f2ee_100%)]" />
+      </div>
+
+      <div class="relative mx-auto flex min-h-[78vh] max-w-[1440px] flex-col justify-between px-4 pb-12 pt-16 lg:px-6 lg:pt-20">
+        <div class="max-w-4xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-stone-600">
             Security booking platform
           </p>
-          <h1 class="mt-6 max-w-4xl text-5xl font-semibold leading-[0.95] text-white md:text-7xl">
-            Book trusted security teams with the speed of a ride-hailing app.
+          <h1 class="mt-4 text-5xl font-semibold leading-[0.95] text-stone-950 md:max-w-5xl md:text-7xl">
+            Book trusted security teams with a real dispatch experience.
           </h1>
-          <p class="mt-8 max-w-2xl text-lg leading-8 text-stone-300">
-            Guardian gives clients a premium booking experience, providers a working dispatch dashboard,
-            and admins a clean operating surface built for real-world trust and control.
+          <p class="mt-6 max-w-2xl text-base leading-7 text-stone-700 md:text-lg">
+            Guardian is built like an operating product, not a brochure. Clients book from a live
+            map, providers run availability and job movement, and admins keep the network healthy.
           </p>
 
-          <div class="mt-10 flex flex-wrap gap-4">
+          <div class="mt-8 flex flex-wrap gap-3">
             <NuxtLink
               to="/auth/sign-in"
-              class="rounded-full bg-emerald-300 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-emerald-200"
+              class="rounded-full bg-stone-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-stone-800"
             >
-              Launch the MVP
+              Open the product
             </NuxtLink>
             <NuxtLink
               to="/dashboard/client"
-              class="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-white transition hover:border-stone-500"
+              class="rounded-full border border-stone-300 bg-white/80 px-6 py-3 text-sm font-semibold text-stone-800 backdrop-blur transition hover:border-stone-400 hover:bg-white"
             >
-              Open dashboard
+              Preview client flow
             </NuxtLink>
           </div>
-
-          <ul class="mt-12 grid gap-4 text-sm text-stone-300 md:grid-cols-3">
-            <li
-              v-for="signal in trustSignals"
-              :key="signal"
-              class="rounded-2xl border border-stone-800 bg-stone-900/60 p-4"
-            >
-              {{ signal }}
-            </li>
-          </ul>
         </div>
 
-        <div class="space-y-6">
-          <div class="rounded-3xl border border-stone-800 bg-stone-900/75 p-6 shadow-2xl shadow-black/30">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <p class="text-sm text-stone-400">Live booking model</p>
-                <p class="mt-2 text-2xl font-semibold text-white">Premium security, operationally simple.</p>
-              </div>
-              <StatusBadge label="MVP Ready" tone="success" />
-            </div>
+        <div class="mt-14 grid gap-4 md:grid-cols-3">
+          <article
+            v-for="signal in trustSignals"
+            :key="signal"
+            class="rounded-lg border border-white/70 bg-white/78 p-4 shadow-sm backdrop-blur"
+          >
+            <p class="text-sm leading-6 text-stone-700">{{ signal }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-            <div class="mt-6 space-y-4">
-              <article
-                v-for="service in serviceTypes.slice(0, 3)"
-                :key="service.id"
-                class="rounded-2xl border border-stone-800 bg-stone-950/80 p-4"
-              >
-                <div class="flex items-center justify-between gap-3">
-                  <div>
-                    <p class="text-sm text-stone-400">{{ service.description }}</p>
-                    <p class="mt-1 text-lg font-medium text-white">{{ service.name }}</p>
-                  </div>
-                  <p class="text-sm font-semibold text-emerald-300">
-                    {{ formatCurrency(service.baseRateCents) }}/hr
-                  </p>
-                </div>
-              </article>
-            </div>
+    <section class="border-b border-stone-200 bg-white">
+      <div class="mx-auto max-w-[1440px] px-4 py-16 lg:px-6 lg:py-20">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="max-w-2xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">Service catalog</p>
+            <h2 class="mt-2 text-3xl font-semibold text-stone-950 md:text-4xl">
+              The product reads like an operations tool because the workflows are the product.
+            </h2>
           </div>
-
           <div class="grid gap-4 sm:grid-cols-2">
             <MetricCard label="Booking states" value="6" detail="Pending through completed" />
             <MetricCard label="User roles" value="3" detail="Client, provider, admin" />
           </div>
         </div>
+
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <article
+            v-for="service in serviceTypes.slice(0, 3)"
+            :key="service.id"
+            class="rounded-lg border border-stone-200 bg-stone-50 p-5"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-sm text-stone-500">{{ service.description }}</p>
+                <h3 class="mt-2 text-lg font-semibold text-stone-950">{{ service.name }}</h3>
+              </div>
+              <p class="text-sm font-semibold text-stone-700">
+                {{ formatCurrency(service.baseRateCents) }}/hr
+              </p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="border-b border-stone-900 bg-stone-950">
-      <div class="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+    <section class="border-b border-stone-200 bg-[#eeece7]">
+      <div class="mx-auto max-w-[1440px] px-4 py-16 lg:px-6 lg:py-20">
         <div class="max-w-2xl">
-          <p class="text-sm font-semibold uppercase tracking-wide text-amber-300">How it works</p>
-          <h2 class="mt-4 text-3xl font-semibold text-white md:text-4xl">
-            One product, three distinct operating surfaces.
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">How it runs</p>
+          <h2 class="mt-2 text-3xl font-semibold text-stone-950 md:text-4xl">
+            Three operating surfaces, one shared booking lifecycle.
           </h2>
         </div>
 
-        <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
           <article
             v-for="item in workflow"
             :key="item.title"
-            class="rounded-3xl border border-stone-800 bg-stone-900/60 p-6"
+            class="rounded-lg border border-stone-200 bg-white p-5"
           >
-            <p class="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">
               {{ item.title }}
             </p>
-            <p class="mt-4 text-base leading-7 text-stone-300">
+            <p class="mt-4 text-base leading-7 text-stone-700">
               {{ item.body }}
             </p>
           </article>
@@ -129,20 +170,26 @@ const workflow = [
       </div>
     </section>
 
-    <section class="bg-stone-950">
-      <div class="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div class="max-w-2xl">
-            <p class="text-sm font-semibold uppercase tracking-wide text-sky-300">Included now</p>
-            <h2 class="mt-4 text-3xl font-semibold text-white md:text-4xl">
-              Auth, dashboards, booking flow, provider workflow, and admin oversight.
-            </h2>
-          </div>
+    <section class="bg-[#f4f2ee]">
+      <div class="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-16 lg:flex-row lg:items-end lg:justify-between lg:px-6 lg:py-20">
+        <div class="max-w-2xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-stone-500">Included now</p>
+          <h2 class="mt-2 text-3xl font-semibold text-stone-950 md:text-4xl">
+            Auth, dashboards, booking flow, provider workflow, and admin oversight are already wired.
+          </h2>
+        </div>
+        <div class="flex flex-wrap gap-3">
           <NuxtLink
             to="/auth/sign-in"
-            class="inline-flex w-fit rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-white transition hover:border-stone-500"
+            class="rounded-full bg-stone-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-stone-800"
           >
-            Use the demo accounts
+            Sign in
+          </NuxtLink>
+          <NuxtLink
+            to="/dashboard/provider"
+            class="rounded-full border border-stone-300 bg-white px-6 py-3 text-sm font-semibold text-stone-800 transition hover:border-stone-400 hover:bg-stone-100"
+          >
+            Preview provider flow
           </NuxtLink>
         </div>
       </div>

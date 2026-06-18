@@ -10,11 +10,11 @@ const props = withDefaults(
 )
 
 const toneClasses: Record<NonNullable<typeof props.tone>, string> = {
-  neutral: 'border-stone-700 bg-stone-900 text-stone-200',
-  success: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200',
-  warning: 'border-amber-400/25 bg-amber-400/10 text-amber-200',
-  danger: 'border-rose-400/25 bg-rose-400/10 text-rose-200',
-  info: 'border-sky-400/25 bg-sky-400/10 text-sky-200'
+  neutral: 'border-stone-200 bg-stone-100 text-stone-700',
+  success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  warning: 'border-amber-200 bg-amber-50 text-amber-700',
+  danger: 'border-rose-200 bg-rose-50 text-rose-700',
+  info: 'border-sky-200 bg-sky-50 text-sky-700'
 }
 
 const resolvedTone = computed(() => props.tone ?? 'neutral')

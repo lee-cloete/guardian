@@ -8,18 +8,26 @@
   }
 
   html {
-    @apply bg-stone-950 text-stone-100 antialiased;
+    @apply bg-[#f4f2ee] text-stone-900 antialiased;
   }
 
   body {
-    @apply min-h-screen bg-stone-950 text-stone-100;
+    @apply min-h-screen bg-[#f4f2ee] text-stone-900;
   }
 
   * {
-    @apply border-stone-800;
+    @apply border-stone-200;
   }
 
   ::selection {
     @apply bg-emerald-300 text-stone-950;
+  }
+
+  .maplibregl-popup-content {
+    @apply rounded-2xl border border-stone-200 bg-white px-3 py-2 shadow-xl;
+  }
+
+  .maplibregl-popup-tip {
+    @apply border-t-white;
   }
 }
